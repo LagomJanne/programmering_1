@@ -1,0 +1,10 @@
+<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><element><id>UMLClass</id><coordinates><x>790</x><y>11</y><w>190</w><h>310</h></coordinates><panel_attributes>Fordon
+--
+fabrikat:str
+color:str
+--
+_init_constructor(fabrikat, color)
+set fabrikat(str)
+get_fabrikat():str
+set_color(str)
+get_color():str</panel_attributes><additional_attributes></additional_attributes></element></diagram>
