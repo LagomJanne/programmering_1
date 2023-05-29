@@ -1,0 +1,12 @@
+<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><element><id>UMLClass</id><coordinates><x>170</x><y>90</y><w>170</w><h>330</h></coordinates><panel_attributes>main
+--
+url:str
+nr:int
+jokeobj, Jokehandler
+--
+main()</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>530</x><y>90</y><w>190</w><h>330</h></coordinates><panel_attributes>Jokehandler
+--
+adress:str
+--
+__init__(adress:str)
+getJoke()joke:str</panel_attributes><additional_attributes></additional_attributes></element></diagram>

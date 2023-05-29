@@ -1,0 +1,10 @@
+<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><element><id>UMLClass</id><coordinates><x>20</x><y>40</y><w>100</w><h>250</h></coordinates><panel_attributes>main
+--
+Lotteri
+
+--
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>320</x><y>60</y><w>100</w><h>230</h></coordinates><panel_attributes>Lotteri
+--
+Vinster()</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>110</x><y>160</y><w>230</w><h>40</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>210;20;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>320</x><y>60</y><w>100</w><h>230</h></coordinates><panel_attributes>Lotteri
+--
+Vinster()</panel_attributes><additional_attributes></additional_attributes></element></diagram>
