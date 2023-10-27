@@ -17,6 +17,7 @@ c.execute('''CREATE TABLE IF NOT EXISTS glosor (
 conn.commit()
 
 # Function to fill the database with glossary entries
+
 def fyll_databas():
     glosor_att_lagga_till = [
         ("hund", "dog"),
@@ -51,7 +52,7 @@ totalt_antal_glosor = antal_glosor
 antal_ratt = 0
 antal_fel = 0
 ratt_svar = ""
-lagg_till_visad = False
+lagg_till_visad = True
 
 # Function to check the answer
 def kontrollera_svar():
@@ -138,22 +139,42 @@ def toggle_editing():
     lagg_till_visad = not lagg_till_visad
 
     if lagg_till_visad:
-        lagga_till_frame.pack()
-        ta_bort_knapp.config(state=tk.NORMAL)
         visa_redigering_knapp.config(text="Dölj Redigering")
-        skrivrutan_frame.pack()
-        lagg_till_ta_bort_frame.pack()
-    else:
-        lagga_till_frame.pack_forget()
-        ta_bort_knapp.config(state=tk.DISABLED)
+        nytt_ord_entry.pack()
+        ny_oversattning_entry.pack()
+        lagg_till_knapp.pack()
+        ta_bort_knapp.pack()
+        glossary_listbox.pack()
+    else: 
         visa_redigering_knapp.config(text="Visa Redigering")
-        skrivrutan_frame.pack_forget()
-        lagg_till_ta_bort_frame.pack_forget()
+        nytt_ord_entry.pack_forget()
+        ny_oversattning_entry.pack_forget()
+        lagg_till_knapp.pack_forget()
+        ta_bort_knapp.pack_forget()
+       
+        glossary_listbox.pack_forget()
+
+
+
+#funktion för att uppdatera antalet glosor efter att man tryckt på börja om knappen
+def update_glosor():
+    c.execute("SELECT COUNT(*) FROM glosor")
+    antal_glosor = c.fetchone()[0]
+    conn.commit()
+
+def update_glossary():
+    glossary_listbox.delete(0, tk.END)
+    glosor = uppdatera_glosor()
+    for glosa in glosor:
+        glossary_listbox.insert(tk.END, glosa[1])
+
+
+
+
 
 # Create the main window
 root = tk.Tk()
 root.title("Glosor Tränare")
-
 # Create GUI elements
 ord_label = tk.Label(root, text="", font=("Arial", 24))
 entry = tk.Entry(root, font=("Arial", 16))
@@ -163,7 +184,9 @@ kontrollera_knapp = tk.Button(root, text="Kontrollera", command=kontrollera_svar
 nasta_knapp = tk.Button(root, text="Nästa", command=nytt_los)
 resultat_label = tk.Label(root, text="", font=("Arial", 16))
 resultat_label.pack()
-atersta_ll_knapp = tk.Button(root, text="Börja om", command=borja_om)
+atersta_ll_knapp = tk.Button(root, text="Börja om", command=lambda: [borja_om(), update_glosor(), update_glossary()])
+visa_redigering_knapp = tk.Button(root, text="Visa Redigering", command=toggle_editing)
+
 
 nytt_ord_entry = tk.Entry(root, font=("Arial", 16))
 ny_oversattning_entry = tk.Entry(root, font=("Arial", 16))
@@ -174,12 +197,12 @@ glossary_listbox.config(selectmode=tk.SINGLE)
 ta_bort_knapp = tk.Button(root, text="Ta bort glosa", command=ta_bort_glosa)
 
 lagga_till_frame = tk.Frame(root)
-skrivrutan_frame = tk.Frame(lagga_till_frame)
+skrivrutan_frame = tk.Frame(root)
 lagg_till_ta_bort_frame = tk.Frame(root)
 
-visa_redigering_knapp = tk.Button(root, text="Visa Redigering", command=toggle_editing)
 
-# Place GUI elements
+
+# GUI
 ord_label.pack(pady=20)
 entry.pack(pady=10)
 svar_label.pack(pady=10)
@@ -187,18 +210,20 @@ kontrollera_knapp.pack()
 nasta_knapp.pack()
 atersta_ll_knapp.pack()
 nasta_knapp.config(state=tk.DISABLED)
+visa_redigering_knapp.pack()
+
 
 nytt_ord_entry.pack(pady=10)
 ny_oversattning_entry.pack(pady=10)
 lagg_till_knapp.pack()
 
-skrivrutan_frame.pack()
-lagga_till_ta_bort_frame.pack()
-
 lagga_till_frame.pack()
+skrivrutan_frame.pack()
+lagg_till_ta_bort_frame.pack()
+
 glossary_listbox.pack(pady=20)
-ta_bort_knapp.pack()
-visa_redigering_knapp.pack()
+ta_bort_knapp.pack_forget()
+
 
 uppdatera_glossary_listbox()
 
