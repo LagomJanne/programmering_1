@@ -20,11 +20,11 @@ conn.commit()
 
 def fyll_databas():
     glosor_att_lagga_till = [
-        ("hund", "dog"),
-        ("katt", "cat"),
-        ("bil", "car"),
-        ("bok", "book"),
-        ("sol", "sun")
+        ("dog", "hund"),
+        ("cat", "katt"),
+        ("car", "bil"),
+        ("book", "bok"),
+        ("sun", "sol")
     ]
 
     for ord, oversattning in glosor_att_lagga_till:
@@ -151,12 +151,14 @@ def toggle_editing():
         ny_oversattning_entry.pack_forget()
         lagg_till_knapp.pack_forget()
         ta_bort_knapp.pack_forget()
-       
         glossary_listbox.pack_forget()
 
 
 
-#funktion för att uppdatera antalet glosor efter att man tryckt på börja om knappen
+
+
+
+#funktioner för att uppdatera gloslistan efter redigering
 def update_glosor():
     c.execute("SELECT COUNT(*) FROM glosor")
     antal_glosor = c.fetchone()[0]
@@ -167,8 +169,6 @@ def update_glossary():
     glosor = uppdatera_glosor()
     for glosa in glosor:
         glossary_listbox.insert(tk.END, glosa[1])
-
-
 
 
 
@@ -190,7 +190,7 @@ visa_redigering_knapp = tk.Button(root, text="Visa Redigering", command=toggle_e
 
 nytt_ord_entry = tk.Entry(root, font=("Arial", 16))
 ny_oversattning_entry = tk.Entry(root, font=("Arial", 16))
-lagg_till_knapp = tk.Button(root, text="Lägg till glosa", command=lagg_till_glosa)
+lagg_till_knapp = tk.Button(root, text="Lägg till glosa", command=lambda: [lagg_till_glosa(), update_glossary()])
 
 glossary_listbox = tk.Listbox(root, font=("Arial", 16))
 glossary_listbox.config(selectmode=tk.SINGLE)
@@ -205,6 +205,7 @@ lagg_till_ta_bort_frame = tk.Frame(root)
 # GUI
 ord_label.pack(pady=20)
 entry.pack(pady=10)
+entry.focus_set()
 svar_label.pack(pady=10)
 kontrollera_knapp.pack()
 nasta_knapp.pack()
