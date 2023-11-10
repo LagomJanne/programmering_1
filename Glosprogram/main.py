@@ -2,21 +2,20 @@ import sqlite3
 import tkinter as tk
 import random
 
-# Create an SQLite database and a table
+# Skapa databas
 conn = sqlite3.connect("glosor.db")
 c = conn.cursor()
 
-# Create a table if it doesn't exist
+# Skapa databas ifall den inte existerar
 c.execute('''CREATE TABLE IF NOT EXISTS glosor (
     id INTEGER PRIMARY KEY,
     ord TEXT,
     oversattning TEXT
 )''')
 
-# Save changes to the database
+# Spara
 conn.commit()
 
-# Function to fill the database with glossary entries
 
 def fyll_databas():
     glosor_att_lagga_till = [
@@ -32,19 +31,20 @@ def fyll_databas():
 
     conn.commit()
 
-# Check if glossary entries already exist in the database
+# Kollar om det finns glosor i databasen
 c.execute("SELECT COUNT(*) FROM glosor")
 antal_glosor = c.fetchone()[0]
 
 if antal_glosor == 0:
     fyll_databas()
 
-# Function to randomly select a word that hasn't been shown yet
+# välja en glosa som inte valts än
 def slumpa_nytt_ord(visade_glosor):
     c.execute("SELECT * FROM glosor WHERE ord NOT IN ({}) ORDER BY RANDOM() LIMIT 1".format(
         ",".join(["?"] * len(visade_glosor))), tuple(visade_glosor))
     row = c.fetchone()
     return row
+
 
 # Global variables
 visade_glosor = []
@@ -54,7 +54,7 @@ antal_fel = 0
 ratt_svar = ""
 lagg_till_visad = True
 
-# Function to check the answer
+# Funktion för att kolla om svaret är rätt eller fel
 def kontrollera_svar():
     global antal_ratt, antal_fel
     svar = entry.get()
@@ -72,27 +72,9 @@ def kontrollera_svar():
     kontrollera_knapp.config(state=tk.DISABLED)
     nasta_knapp.config(state=tk.NORMAL)
 
-# Function to show a new word
-def nytt_los():
-    if len(visade_glosor) == totalt_antal_glosor:
-        # All glossary entries have been shown, show the result
-        ord_label.config(text="Alla glosor är klara!")
-        resultat_text = f"Antal rätt: {antal_ratt}\nAntal fel: {antal_fel}"
-        resultat_label.config(text=resultat_text)
-    else:
-        # Show a new glossary entry that hasn't been shown yet
-        row = slumpa_nytt_ord(visade_glosor)
-        visade_glosor.append(row[1])
-        global ratt_svar
-        ratt_svar = row[2]
-        ord_label.config(text=row[1])
-        entry.delete(0, "end")
-        svar_label.config(text="", fg="black")
-        entry.config(state=tk.NORMAL)
-        kontrollera_knapp.config(state=tk.NORMAL)
-        nasta_knapp.config(state=tk.DISABLED)
+# Funktion för att visa resultatet
 
-# Function to start over the game
+# Funktion fär att börja om
 def borja_om():
     global visade_glosor, antal_ratt, antal_fel
     visade_glosor = []
@@ -101,7 +83,7 @@ def borja_om():
     nytt_los()
     resultat_label.config(text="")
 
-# Function to add a glossary entry to the database
+# Funktion för att lägga till nya glosor
 def lagg_till_glosa():
     ord = nytt_ord_entry.get()
     oversattning = ny_oversattning_entry.get()
@@ -112,7 +94,7 @@ def lagg_till_glosa():
         nytt_ord_entry.delete(0, "end")
         ny_oversattning_entry.delete(0, "end")
 
-# Function to remove a glossary entry from the database
+# Funktion för att ta bort glosor från databasen
 def ta_bort_glosa():
     selected_glosa = glossary_listbox.get(tk.ACTIVE)
     if selected_glosa:
@@ -120,7 +102,7 @@ def ta_bort_glosa():
         conn.commit()
         uppdatera_glossary_listbox()
 
-# Function to update the glossary entries
+# Fu
 def uppdatera_glosor():
     c.execute("SELECT * FROM glosor")
     glosor = c.fetchall()
@@ -153,28 +135,64 @@ def toggle_editing():
         ta_bort_knapp.pack_forget()
         glossary_listbox.pack_forget()
 
-
-
-
-
-
 #funktioner för att uppdatera gloslistan efter redigering
-def update_glosor():
-    c.execute("SELECT COUNT(*) FROM glosor")
-    antal_glosor = c.fetchone()[0]
-    conn.commit()
+
 
 def update_glossary():
+    global totalt_antal_glosor
     glossary_listbox.delete(0, tk.END)
+    antal_glosor = c.execute("SELECT COUNT(*) FROM glosor").fetchone()[0]
+    totalt_antal_glosor = antal_glosor
     glosor = uppdatera_glosor()
     for glosa in glosor:
         glossary_listbox.insert(tk.END, glosa[1])
 
+""""
+def update_glossary():
+    global totalt_antal_glosor
+    glossary_listbox.delete(0, tk.END)
+    c.execute("SELECT COUNT(*) FROM glosor")
+    total_antal_glosor = c.fetchone()[0]
+    glosor = uppdatera_glosor()
+    for glosa in glosor:
+        glossary_listbox.insert(tk.END, glosa[1])
+    totalt_antal_glosor = total_antal_glosor
+    
+"""
+"""
+    def update_glossary():
+    glossary_listbox.delete(0, tk.END)
+    c.execute("SELECT COUNT(*) FROM glosor")
+    antal_glosor = c.fetchall()
+    totalt_antal_glosor = antal_glosor
+    glosor = uppdatera_glosor()
+    for glosa in glosor:
+        glossary_listbox.insert(tk.END, glosa[1])
+       
+"""
 
+
+def nytt_los():
+    if len(visade_glosor) == totalt_antal_glosor:
+        ord_label.config(text="Alla glosor är klara!")
+        resultat_text = f"Antal rätt: {antal_ratt}\nAntal fel: {antal_fel}"
+        resultat_label.config(text=resultat_text)
+    else:
+        # Show a new glossary entry that hasn't been shown yet
+        row = slumpa_nytt_ord(visade_glosor)
+        visade_glosor.append(row[1])
+        global ratt_svar
+        ratt_svar = row[2]
+        ord_label.config(text=row[1])
+        entry.delete(0, "end")
+        svar_label.config(text="", fg="black")
+        entry.config(state=tk.NORMAL)
+        kontrollera_knapp.config(state=tk.NORMAL)
+        nasta_knapp.config(state=tk.DISABLED)
 
 # Create the main window
 root = tk.Tk()
-root.title("Glosor Tränare")
+root.title("Glos Tränare")
 # Create GUI elements
 ord_label = tk.Label(root, text="", font=("Arial", 24))
 entry = tk.Entry(root, font=("Arial", 16))
@@ -184,7 +202,7 @@ kontrollera_knapp = tk.Button(root, text="Kontrollera", command=kontrollera_svar
 nasta_knapp = tk.Button(root, text="Nästa", command=nytt_los)
 resultat_label = tk.Label(root, text="", font=("Arial", 16))
 resultat_label.pack()
-atersta_ll_knapp = tk.Button(root, text="Börja om", command=lambda: [borja_om(), update_glosor(), update_glossary()])
+atersta_ll_knapp = tk.Button(root, text="Börja om", command=lambda: [borja_om(), update_glossary()])
 visa_redigering_knapp = tk.Button(root, text="Visa Redigering", command=toggle_editing)
 
 
@@ -228,13 +246,12 @@ ta_bort_knapp.pack_forget()
 
 uppdatera_glossary_listbox()
 
-toggle_editing()  # Hide editing from the start
+toggle_editing() 
 
-# Randomly select the first word at the start
+
 nytt_los()
 
-# Ensure that you close the database connection when the program is closed
+
 root.protocol("WM_DELETE_WINDOW", lambda: conn.close())
 
-# Start the tkinter event loop
 root.mainloop()
